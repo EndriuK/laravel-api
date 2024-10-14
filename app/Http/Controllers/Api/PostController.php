@@ -12,7 +12,7 @@ class PostController extends Controller
     public function index()
     {
         // $posts = Post::all(); // Restituisce tutti i post
-        $posts = Post::paginate(6); // Restituisce i post suddivisi in pagine. Ho definito che ne saranno 6 per pagina.
+        $posts = Post::with('category', 'tags')->paginate(6); // Restituisce i post suddivisi in pagine. Ho definito che ne saranno 6 per pagina.
 
         return response()->json([
             'success' => true,
