@@ -19,4 +19,22 @@ class PostController extends Controller
             'results' => $posts
         ]);
     }
+
+    public function show($slug)
+    {
+        // recupero il post avente lo slug specificato
+        $post = Post::with('category', 'tags')->where('slug', $slug)->first();
+
+        // verifico che il post non sia nulla e quindi che il post esista
+        if ($post) {
+            return response()->json([
+                'success' => true,
+                'results' => $post,
+            ]);
+        }
+
+        return response()->json([
+            'sucess' => false,
+        ]);
+    }
 }
