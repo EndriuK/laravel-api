@@ -13,22 +13,12 @@ use App\Models\Tag;
 
 class PostController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
         $posts = Post::all();
         return view('admin.posts.index', compact('posts'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         $categories = Category::all();
@@ -36,28 +26,20 @@ class PostController extends Controller
         return view('admin.posts.create', compact('categories', 'tags'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \App\Http\Requests\StorePostRequest  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(StorePostRequest $request)
     {
-
         $form_data = $request->validated();
         $slug = Post::generateSlug($form_data['title']);
         $form_data['slug'] = $slug;
 
         // Verifica se request abbia il file cover_image
         if ($request->hasFile('cover_image')) {
-
-            // Effetua l'upload del file e salvo il path dell'immagine in una variabile
-            $path = Storage::disk('public')->put('cover_images', $form_data['cover_image']);
-
-            // Assegno il valore contenuto nella variavile alla chiave 'cover_image' di 'form_data'
+            // Effetua l'upload del file e salva il path dell'immagine in una variabile
+            $path = $request->file('cover_image')->store('cover_images', 'public');
+            // Assegna il valore contenuto nella variabile alla chiave 'cover_image' di 'form_data'
             $form_data['cover_image'] = $path;
         } else {
+            // Immagine di placeholder se non è stata caricata un'immagine
             $form_data['cover_image'] = 'https://placehold.co/600x400?text=Immagine+copertina';
         }
 
@@ -73,58 +55,37 @@ class PostController extends Controller
         return redirect()->route('admin.posts.index')->with('message', 'Post creato correttamente');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Post  $post
-     * @return \Illuminate\Http\Response
-     */
     public function show(Post $post)
     {
         return view('admin.posts.show', compact('post'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Post  $post
-     * @return \Illuminate\Http\Response
-     */
     public function edit(Post $post)
     {
         $categories = Category::all();
-
         $tags = Tag::all();
 
         return view('admin.posts.edit', compact('post', 'categories', 'tags'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \App\Http\Requests\UpdatePostRequest  $request
-     * @param  \App\Models\Post  $post
-     * @return \Illuminate\Http\Response
-     */
     public function update(UpdatePostRequest $request, Post $post)
     {
         $form_data = $request->validated();
 
         // Verifica se request abbia il file cover_image
         if ($request->hasFile('cover_image')) {
-
-            // Verifico se il post, ha già un'imaggne di copertina
+            // Verifico se il post ha già un'immagine di copertina
             if (Str::startsWith($post->cover_image, 'https') === false) {
                 Storage::disk('public')->delete($post->cover_image);
             }
 
-            // Effetua l'upload del file e salvo il path dell'immagine in una variabile
-            $path = Storage::disk('public')->put('cover_images', $form_data['cover_image']);
-
-            // Assegno il valore contenuto nella variavile alla chiave 'cover_image' di 'form_data'
+            // Effettua l'upload del file e salva il path dell'immagine in una variabile
+            $path = $request->file('cover_image')->store('cover_images', 'public');
+            // Assegna il valore contenuto nella variabile alla chiave 'cover_image' di 'form_data'
             $form_data['cover_image'] = $path;
         }
 
+        // Genera lo slug del post
         $form_data['slug'] = Post::generateSlug($form_data['title']);
 
         $post->update($form_data);
@@ -138,15 +99,8 @@ class PostController extends Controller
         return redirect()->route('admin.posts.index')->with('message', 'Post modificato correttamente');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Post  $post
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Post $post)
     {
-
         if (Str::startsWith($post->cover_image, 'https') === false) {
             Storage::disk('public')->delete($post->cover_image);
         }

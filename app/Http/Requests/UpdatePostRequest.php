@@ -22,16 +22,30 @@ class UpdatePostRequest extends FormRequest
      *
      * @return array<string, mixed>
      */
+
+
+    // public function rules()
+    // {
+    //     return [
+    //         'title' => ['required', Rule::unique('posts')->ignore($this->route('post')), 'max:150'],
+    //         'slug' => ['max:255'],
+    //         'cover_image' => ['nullable', 'image', 'max:4084'],
+    //         'content' => ['nullable'],
+    //         'category_id' => ['nullable', 'exists:categories,id'],
+    //     ];
+    // }
+
     public function rules()
     {
         return [
             'title' => ['required', Rule::unique('posts')->ignore($this->route('post')), 'max:150'],
             'slug' => ['max:255'],
-            'cover_image' => ['nullable', 'image', 'max:4084'],
+            'cover_image' => ['nullable', 'mimes:jpeg,jpg,png,gif,webp', 'max:5120'], // 5MB di limite
             'content' => ['nullable'],
             'category_id' => ['nullable', 'exists:categories,id'],
         ];
     }
+
 
     public function messages()
     {
