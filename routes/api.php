@@ -25,6 +25,9 @@ Route::get('/hello', [GuestController::class, 'hello'])->name('guest_home');
 
 Route::get('/posts', [PostController::class, 'index'])->name('posts');
 
+Route::get('/posts/{slug}', [PostController::class, 'show'])->name('post');
+
+
 // Route::get('/test', function () {
 //     return response()->json([
 //         'name' => 'endriu',
