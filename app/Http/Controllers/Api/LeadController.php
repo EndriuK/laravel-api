@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Mail;
 use App\Models\Lead;
 use App\Mail\NewContact;
 
+
+
 class LeadController extends Controller
 {
     public function store(Request $request)
