@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\GuestController as GuestController;
 use App\Http\Controllers\Api\PostController as PostController;
+use App\Http\Controllers\Api\LeadController as LeadController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,6 +28,7 @@ Route::get('/posts', [PostController::class, 'index'])->name('posts');
 
 Route::get('/posts/{slug}', [PostController::class, 'show'])->name('post');
 
+Route::post('/contacts', [LeadController::class, 'store'])->name('save_contanct');
 
 // Route::get('/test', function () {
 //     return response()->json([
